@@ -47,7 +47,7 @@ const accountSchema = new Schema<AccountDocument>(
 );
 
 const AccountModel =
-  mongoose.models.Account ||
+  mongoose.models.Account ??
   mongoose.model<AccountDocument>("Account", accountSchema);
 
 export default AccountModel;

@@ -1,13 +1,16 @@
+import session from "cookie-session";
+import cors from "cors";
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
-import cors from "cors";
-import session from "cookie-session";
+import passport from "passport";
 import { config } from "./config/app.config";
 import connectDatabase from "./config/database.config";
 import { HTTPSTATUS } from "./config/http.config";
-import { errorHandler } from "./middlewares/errorHandler.middleware";
+import "./config/passport.config";
 import { asyncHandler } from "./middlewares/asynHandler.middleware";
+import { errorHandler } from "./middlewares/errorHandler.middleware";
 import { BadRequestException } from "./utils/app-error";
+import authRoute from "./routes/auth.route";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -25,6 +28,10 @@ app.use(
     sameSite: "lax",
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(cors({ origin: config.FRONTEND_URL, credentials: true }));
 
 app.get(
@@ -34,7 +41,7 @@ app.get(
     res.status(HTTPSTATUS.OK).json({ message: "Welcome to the API" });
   })
 );
-
+app.use(`${BASE_PATH}/auth`, authRoute);
 app.use(errorHandler);
 
 app.listen(config.PORT, async () => {

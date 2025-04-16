@@ -16,13 +16,18 @@ const MemberSchema = new Schema<MemberDocument>(
       ref: "Workspace",
       required: true,
     },
-    role: { type: Schema.Types.ObjectId, ref: "Role", required: true },
+    // role: { type: Schema.Types.ObjectId, ref: "Role", required: true },
+    role: {
+      type: Schema.Types.ObjectId,
+      ref: "Role",
+      required: true,
+    },
     joinDate: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
 
-const Member =
+const MemberModel =
   mongoose.models.Member ||
   mongoose.model<MemberDocument>("Member", MemberSchema);
-export default Member;
+export default MemberModel;
