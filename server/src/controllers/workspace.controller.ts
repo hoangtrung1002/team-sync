@@ -4,6 +4,7 @@ import { asyncHandler } from "../middlewares/asynHandler.middleware";
 import { getMemberRoleInWorkspace } from "../services/member.service";
 import {
   createWorkspaceService,
+  getMemberWorkspaceService,
   getUserWorkspacesService,
   getWorkspaceByIdService,
 } from "../services/workspace.service";
@@ -11,6 +12,8 @@ import {
   createWorkspaceSchema,
   workspaceIdSchema,
 } from "../validation/workspace.validation";
+import roleGuard from "../utils/roleGuard";
+import { Permissions } from "../enums/role.enum";
 
 export const createWorkspaceController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -47,6 +50,24 @@ export const getWorkspaceByIdController = asyncHandler(
     return res.status(HTTPSTATUS.OK).json({
       message: "Workspace fetched successfully",
       workspace,
+    });
+  }
+);
+
+export const getMemberWorkspaceController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const workspaceId = workspaceIdSchema.parse(req.params.id);
+    const userId = req.user?._id;
+
+    const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+    roleGuard(role, [Permissions.VIEW_ONLY]);
+
+    const { members, roles } = await getMemberWorkspaceService(workspaceId);
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Member workspace fetched successfully",
+      members,
+      roles,
     });
   }
 );
