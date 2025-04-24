@@ -16,7 +16,7 @@ const MemberSchema = new Schema<MemberDocument>(
       ref: "Workspace",
       required: true,
     },
-    // role: { type: Schema.Types.ObjectId, ref: "Role", required: true },
+
     role: {
       type: Schema.Types.ObjectId,
       ref: "Role",
