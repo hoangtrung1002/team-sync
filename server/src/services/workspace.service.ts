@@ -5,6 +5,8 @@ import RoleModel, { RoleDocument } from "../models/role-permission.model";
 import UserModel from "../models/user.model";
 import WorkspaceModel, { WorkspaceDocument } from "../models/workspace.model";
 import { NotFoundException } from "../utils/app-error";
+import TaskModel from "../models/task.model";
+import { TaskStatusEnum } from "../enums/task.enum";
 
 export async function createWorkspaceService(
   userId: string,
@@ -79,4 +81,25 @@ export async function getMemberWorkspaceService(workspaceId: string) {
   ).lean(); // skip the process that the query result is converted from POJO to document Mongoose
 
   return { members, roles };
+}
+
+export async function getWorkspaceAnalyticsService(workspaceId: string) {
+  const currentDate = new Date();
+  const totalTasks = await TaskModel.countDocuments({
+    workspace: workspaceId,
+  });
+  const overdueTasks = await TaskModel.countDocuments({
+    workspace: workspaceId,
+    dueDate: { $lt: currentDate },
+    status: { $ne: TaskStatusEnum.DONE },
+  });
+
+  const completedTasks = await TaskModel.countDocuments({
+    workspace: workspaceId,
+    status: TaskStatusEnum.DONE,
+  });
+
+  const analytics = { totalTasks, overdueTasks, completedTasks };
+
+  return { analytics };
 }
