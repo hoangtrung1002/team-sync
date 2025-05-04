@@ -14,6 +14,7 @@ import authRoute from "./routes/auth.route";
 import userRoute from "./routes/user.route";
 import isAuthenticated from "./middlewares/isAuthenticated.middleware";
 import workspaceRoute from "./routes/workspace.route";
+import memberRoute from "./routes/member.route";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -47,6 +48,7 @@ app.get(
 app.use(`${BASE_PATH}/auth`, authRoute);
 app.use(`${BASE_PATH}/user`, isAuthenticated, userRoute);
 app.use(`${BASE_PATH}/workspace`, isAuthenticated, workspaceRoute);
+app.use(`${BASE_PATH}/member`, isAuthenticated, memberRoute);
 app.use(errorHandler);
 
 app.listen(config.PORT, async () => {

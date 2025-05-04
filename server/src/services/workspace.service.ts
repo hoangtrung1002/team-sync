@@ -103,3 +103,22 @@ export async function getWorkspaceAnalyticsService(workspaceId: string) {
 
   return { analytics };
 }
+
+export async function changeMemberRoleService(
+  workspaceId: string,
+  memberId: string,
+  roleId: string
+) {
+  const workspace = await WorkspaceModel.findById(workspaceId);
+  if (!workspace) throw new NotFoundException("Workspace does not exist");
+
+  const role = await RoleModel.findById(roleId);
+  if (!role) throw new NotFoundException("Role does not exist");
+
+  const member = await MemberModel.findById(memberId);
+  if (!member) throw new Error("Member does not exist");
+
+  member.role = role;
+  await member.save();
+  return { member };
+}

@@ -1,0 +1,22 @@
+import { Request, Response } from "express";
+import { z } from "zod";
+import { HTTPSTATUS } from "../config/http.config";
+import { asyncHandler } from "../middlewares/asynHandler.middleware";
+import { joinWorkspaceByInvite } from "../services/member.service";
+
+export const joinWorkspaceController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const inviteCode = z.string().parse(req.params.inviteCode);
+    const userId = req.user?._id;
+
+    const { workspaceId, role } = await joinWorkspaceByInvite(
+      userId,
+      inviteCode
+    );
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Workspace joined successfully",
+      workspaceId,
+      role,
+    });
+  }
+);
