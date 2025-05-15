@@ -7,7 +7,7 @@ import {
 } from "../enums/task.enum";
 import { generateTaskCode } from "../utils/uuid";
 
-export interface TaskDocument extends Document {
+export interface Task {
   taskCode: string;
   title: string;
   description: string | null;
@@ -21,6 +21,7 @@ export interface TaskDocument extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface TaskDocument extends Document, Task {}
 
 const taskSchema = new Schema<TaskDocument>(
   {
